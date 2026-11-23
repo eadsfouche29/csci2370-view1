@@ -1,0 +1,24 @@
+/* Bone color scheme (proposal, not yet agreed with the team).
+   Only loaded when the page is served with `serve.py --theme bone`; the normal page never includes it.
+   Overrides the color tokens in style.css. Bone is a light, warm palette, so it applies in light and
+   dark mode alike. The selector matches style.css's dark-mode rule in specificity and comes later, so it wins. */
+:root:not([data-theme="none"]){
+  --bg:#F4F1EA;      /* off-white: title bar, side panel, cards, map buttons */
+  --panel:#F4F1EA;
+  --stage:#FAF8F4;   /* off-white, a touch lighter: page background behind the map sheet */
+  --water:#1B2A3A;   /* ocean on the map sheet: dark, slightly muted navy */
+  --land:#D9D0BF;
+  --ink:#000000;     /* all text is black */
+  --mut:#000000;     /* secondary text black too; hierarchy comes from size and weight */
+  --line:#DCD6CA;    /* borders; also the selected-toggle fill */
+  --accent:#000000;  /* links ("Hide", "Click to open in View 2"): pure black */
+  --sev1:#111111; --sev2:#4A4A4A; --sev3:#8A8A8A; --sev4:#C4C4C4;
+  color-scheme:light;
+}
+
+/* text keeps its color on hover (the Fires / About the data headings no longer darken) */
+.drop summary:hover{color:var(--mut)}
+
+/* black text everywhere */
+.seg button{color:#000}
+.seg button[aria-checked="true"]{background:var(--bg);color:#000;box-shadow:inset 0 -2px 0 #000}   /* selected: light tab on the fill + black underline instead of white-on-black */

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wildfire Recovery in California: Climate Context (View 1)</title>
+<link rel="stylesheet" href="style.css">
+<script>
+  // Color-scheme proposals can be previewed with ?theme=<name> (e.g. ?theme=bone) without changing the page for anyone else.
+  (function () {
+    var t = new URLSearchParams(location.search).get('theme');
+    if (['bone'].indexOf(t) >= 0) document.write('<link rel="stylesheet" href="theme-' + t + '.css">');
+  })();
+</script>
+</head>
+<body>
+<main class="v1">
+  <section>
+    <header class="titlebar">
+      <h1>Wildfire Recovery in California: Climate Context</h1>
+    </header>
+    <div id="stage" tabindex="0" aria-label="Map of California with six fire perimeters. Arrow keys pan, plus and minus zoom.">
+      <div id="labels"></div>
+      <div class="mapctl" role="group" aria-label="Map navigation">
+        <button id="zoom-in" type="button" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>
+        <button id="zoom-out" type="button" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10"/></svg></button>
+        <button id="home" type="button" title="Default extent" aria-label="Zoom to all of California"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8 8 3l5.5 5M4 7v6h3v-3.5h2V13h3V7"/></svg></button>
+      </div>
+      <div class="mapbox" id="readout" aria-live="off"></div>
+      <div class="mapbox" id="scalebar" aria-hidden="true"></div>
+      <div id="card" role="tooltip" hidden></div>
+      <div id="loading">Loading terrain…</div>
+    </div>
+  </section>
+
+  <aside>
+    <div class="panelhead"><b>Map layers</b><button type="button" id="panel-toggle" aria-expanded="true">Hide</button></div>
+    <div data-panel="climate">
+      <h2>Climate layer</h2>
+      <div class="seg" role="radiogroup" aria-label="Climate layer">
+        <button type="button" role="radio" data-var="precip" aria-checked="true">Precipitation</button>
+        <button type="button" role="radio" data-var="temp" aria-checked="false">Temperature</button>
+      </div>
+      <div class="legend">
+        <div class="legend-title" id="legend-title"></div>
+        <div class="ramp" id="ramp"></div>
+        <div class="legend-ticks" id="legend-ticks"></div>
+        <div class="stat" id="legend-note"></div>
+      </div>
+    </div>
+
+    <details data-panel="fires" class="drop">
+      <summary>Fires</summary>
+      <ul id="fire-list"></ul>
+    </details>
+
+    <div data-panel="year">
+      <h2>Recovery year</h2>
+      <select id="year" aria-label="Recovery statistics year">
+        <option value="all">All years</option>
+      </select>
+    </div>
+
+    <details data-panel="about" class="drop about">
+      <summary>About the data</summary>
+      <p class="stat src">Elevation: AWS Terrain Tiles (~600 m). Climate: PRISM 30-yr normals (800 m). Context imagery: Landsat WELD 2000 true color (NASA GIBS). Relief: <span id="relief-src">none</span>, 250 m DEM, 12× exaggeration, warm sun from the NW at 18° with cool sky light. Projection: California Albers (EPSG:3310).</p>
+    </details>
+  </aside>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lines/LineSegmentsGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lines/LineGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lines/LineMaterial.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lines/LineSegments2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lines/Line2.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+ "file": "relief.jpg",
+ "version": 1795468055,
+ "w": 3980,
+ "h": 4545,
+ "res_m": 250.0,
+ "flat": [
+  0.6611,
+  0.694,
+  0.7437
+ ],
+ "source": "Blender Cycles render (relief_render.png)"
+}

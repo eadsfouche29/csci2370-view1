@@ -1,0 +1,140 @@
+/* Tokens shared with View 2 (csci2370-view2/style.css) so both views match */
+:root{--bg:#fff;--panel:#F6F7F9;--ink:#1F2A37;--mut:#6B7685;--line:#C9CED6;--accent:#2F6FDE;--orange:#D9480F;--stage:#ECEFF2;
+  --land:#D3D7DC;--water:#E4E8EC;--sev1:#1F2A37;--sev2:#56616F;--sev3:#939CA8;--sev4:#C9CED6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181D;--panel:#1B2128;--ink:#E6EAF0;--mut:#9AA6B4;--line:#323B46;--stage:#1F252C;
+  --land:#3A424C;--water:#232A32;--sev1:#E6EAF0;--sev2:#AEB8C4;--sev3:#75808D;--sev4:#47515C}}
+:root[data-theme="dark"]{--bg:#14181D;--panel:#1B2128;--ink:#E6EAF0;--mut:#9AA6B4;--line:#323B46;--stage:#1F252C;
+  --land:#3A424C;--water:#232A32;--sev1:#E6EAF0;--sev2:#AEB8C4;--sev3:#75808D;--sev4:#47515C}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.4 Inter,system-ui,sans-serif;overflow:hidden}
+h2{margin:0 0 8px;font:700 15px/1.2 Inter,system-ui,sans-serif;color:var(--mut)}
+
+/* full-page map (like the USGS National Map viewer): slim title bar, map fills the rest of the window */
+.v1{position:fixed;inset:0}
+.v1 > section{position:absolute;inset:0;display:flex;flex-direction:column}
+.titlebar{flex:none;display:flex;align-items:baseline;justify-content:center;text-align:center;gap:14px;min-height:52px;padding:14px 16px 10px;min-width:0;
+  background:var(--bg);border-bottom:1px solid var(--line);z-index:4}
+.titlebar h1{margin:0;font:700 18px/1.2 Inter,system-ui,sans-serif;white-space:nowrap}
+
+#stage{position:relative;flex:1;min-height:0;background:var(--stage);overflow:hidden;touch-action:none;cursor:grab}
+#stage:active{cursor:grabbing}
+#stage.over-fire{cursor:pointer}
+#stage.dragging,#stage.dragging.over-fire{cursor:grabbing}
+#stage canvas{display:block;width:100%;height:100%}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-weight:600}
+#labels{position:absolute;inset:0;pointer-events:none;z-index:1}
+
+/* fire labels: text in ink, never the data color */
+.flabel{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;white-space:nowrap;
+  font:600 12px/1 Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);
+  border-radius:0;padding:4px 6px;box-shadow:0 1px 4px rgba(0,0,0,.15);transform:translate(-50%,-100%)}
+.flabel{margin-top:-4px}
+.flabel.below{transform:translate(-50%,0);margin-top:4px}
+.flabel.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink),0 2px 8px rgba(0,0,0,.25)}
+.flabel[hidden]{display:none}
+
+/* state names: spaced capitals in ink with a light halo so they read over climate colors and Landsat */
+.slabel{position:absolute;left:0;top:0;pointer-events:none;white-space:nowrap;text-transform:uppercase;
+  font:700 20px/1 Inter,system-ui,sans-serif;letter-spacing:.45em;padding-left:.45em;color:rgba(31,42,55,.8);
+  text-shadow:0 0 2px rgba(255,255,255,.95),0 0 6px rgba(255,255,255,.75),0 0 12px rgba(255,255,255,.5)}
+.slabel[hidden]{display:none}
+
+/* hover card */
+#card{position:absolute;z-index:2;pointer-events:none;background:var(--bg);border:1px solid var(--line);border-radius:0;
+  padding:10px 12px;width:290px;font-size:13px;line-height:1.35;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#card h3{margin:0;font:700 16px/1.2 Inter,system-ui,sans-serif}
+#card .meta{color:var(--mut);margin:2px 0 8px}
+#card .sec{margin:8px 0 4px;font-weight:700;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+#card dl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:0}
+#card dt{color:var(--mut)}
+#card dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+#card .none{color:var(--mut);font-style:italic}
+#card .go{margin-top:8px;color:var(--accent);font-weight:600}
+.sevbar{display:flex;gap:2px;height:12px;margin:4px 0 4px}
+.sevbar span{display:block;height:100%}
+.sevbar span:first-child{border-radius:0}
+.sevbar span:last-child{border-radius:0}
+.sevkey{display:flex;flex-wrap:wrap;gap:2px 10px;color:var(--mut);font-size:12px}
+.sevkey i{display:inline-block;width:10px;height:10px;border-radius:0;margin-right:4px;vertical-align:-1px}
+
+/* floating, collapsible panel over the map (top-right) */
+aside{position:fixed;top:64px;right:12px;z-index:5;width:320px;max-height:calc(100vh - 136px);overflow:auto;
+  display:flex;flex-direction:column;gap:16px;padding:14px;background:var(--bg);border:1px solid var(--line);
+  border-radius:0;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.panelhead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:-2px 0 -6px}
+.panelhead button{font:600 12px Inter,system-ui,sans-serif;color:var(--accent);background:none;border:0;cursor:pointer;padding:2px 4px}
+aside.collapsed{width:auto;gap:0}
+aside.collapsed > [data-panel]{display:none}
+aside.collapsed .panelhead{margin:0}
+.row{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.stat{color:var(--mut);font-size:13px;margin:6px 0 0}
+.src{margin:0}
+/* dropdowns (Fires, About the data): native details/summary, closed by default */
+.drop summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  font:700 15px/1.2 Inter,system-ui,sans-serif;color:var(--mut)}
+.drop summary::-webkit-details-marker{display:none}
+.drop summary::after{content:"";width:7px;height:7px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg) translateY(-2px);transition:transform .15s}
+.drop[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
+.drop summary:hover{color:var(--ink)}
+.drop #fire-list{margin-top:8px}
+.about .src{margin-top:8px}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.ticks{display:flex;justify-content:space-between;color:var(--mut);font-size:12px}
+select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:0;padding:5px 6px}
+
+.seg{display:flex;border:1px solid var(--line);border-radius:0;overflow:hidden;margin-bottom:10px}
+.seg button{flex:1;font:600 13px Inter,system-ui,sans-serif;padding:7px 6px;border:0;background:var(--bg);color:var(--mut);cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-checked="true"]{background:var(--ink);color:var(--bg)}
+
+.legend-title{font-size:13px;font-weight:600;margin-bottom:4px}
+#legend-note{display:none}   /* no fine print under the legend */
+.ramp{height:14px;border:1px solid var(--line);border-radius:0}
+.legend-ticks{position:relative;height:18px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.legend-ticks span{position:absolute;top:3px;transform:translateX(-50%)}
+.legend-ticks span::before{content:"";position:absolute;left:50%;top:-4px;height:3px;border-left:1px solid var(--mut)}
+
+#fire-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+#fire-list button{width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-align:left;font:inherit;
+  color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:0;padding:6px 8px;cursor:pointer}
+#fire-list button:hover,#fire-list button.on{border-color:var(--ink)}
+#fire-list .nm{font-weight:600}
+#fire-list .yr{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* map chrome, modeled on the USGS National Map viewer: zoom/home at top-left, readout + scale at bottom */
+.mapctl{position:absolute;top:10px;left:10px;z-index:2;display:flex;flex-direction:column;gap:6px}
+.mapctl button{width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
+  background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.mapctl button:hover{border-color:var(--ink)}
+.mapctl svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mapbox{position:absolute;bottom:10px;z-index:2;background:color-mix(in srgb,var(--bg) 90%,transparent);border:1px solid var(--line);
+  border-radius:0;padding:5px 8px;font-size:12px;line-height:1.3;color:var(--ink);font-variant-numeric:tabular-nums;pointer-events:none}
+#readout{left:10px;max-width:calc(100% - 180px)}
+#scalebar{right:12px;display:flex;flex-direction:column;gap:3px;background:none;padding:0;box-shadow:none;
+  filter:drop-shadow(0 0 1.5px var(--bg)) drop-shadow(0 0 1px var(--bg))}   /* no box: just the bar, with a faint halo so it reads over the map */
+#scalebar .sb{border:2px solid var(--ink);border-top:0;height:12px;font-size:11px;line-height:10px;padding-left:3px;white-space:nowrap}
+
+
+/* phones / narrow windows: title wraps, panel docks at the bottom and starts collapsed */
+@media (max-width:800px){
+  .titlebar h1{font-size:15px;white-space:normal}
+  aside{top:auto;bottom:56px;left:12px;right:12px;width:auto;max-height:55vh}
+  aside.collapsed{left:auto}
+}
+
+/* square corners everywhere: panel, hover card, labels, map buttons, readout */
+*,*::before,*::after{border-radius:0}
+
+/* no outlines: boxes are set apart by fills and soft shadows instead of 1px borders */
+.titlebar{border-bottom:0}
+aside,#card,.flabel,.mapctl button,.mapbox,select,.seg,.ramp,#fire-list button{border:0}
+.seg button+button{border-left:0}
+.seg{background:var(--line);padding:2px;gap:2px}
+select{background:var(--line)}
+#fire-list button{background:transparent}
+#fire-list button:hover,#fire-list button.on{background:var(--line)}   /* hover = fill; text color unchanged */
+.mapctl button:hover{background:var(--line)}
+.flabel.on{box-shadow:0 0 0 2px var(--ink),0 2px 8px rgba(0,0,0,.25)}
